@@ -1,14 +1,16 @@
+#include <iostream>
+
+using namespace std;
+
 #define Q 25
 #define D 10
 #define N 5
 #define P 1
 
-#include<iostream>
-using namespace std;
-
-int* arr;
+static int* arr;
+static int quarters, dimes, nickels, pennies, arr_size;
 int* changer(int num);
-int quarters, dimes, nickels, pennies, arr_size;
+
 
 int main(int argc, char const *argv[])
 {
@@ -39,18 +41,18 @@ int* changer(int num){
 
 	arr = new int[arr_size];
 
-	for(int i = 0; i < quarters; i++){
+	for(int i = 0; i < quarters; i++)
 		arr[i] = Q;
-	}
-	for(int i = quarters; i < (quarters + dimes); i++){
+	
+	for(int i = quarters; i < (quarters + dimes); i++)
 		arr[i] = D;
-	}
-	for(int i = (quarters + dimes); i < (quarters + dimes + nickels); i++){
+	
+	for(int i = (quarters + dimes); i < (quarters + dimes + nickels); i++)
 		arr[i] = N;
-	}
-	for(int i = (quarters + dimes + nickels); i < (quarters + dimes + nickels + pennies); i++){
+	
+	for(int i = (quarters + dimes + nickels); i < (quarters + dimes + nickels + pennies); i++)
 		arr[i] = P;
-	}
+
 
 	return arr;
 }
