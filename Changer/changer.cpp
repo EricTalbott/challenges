@@ -9,9 +9,9 @@ using namespace std;
 
 
 int* changer(int amount);
+void printResults(int * arr, int quarters, int dimes, int nickels, int pennies, int arr_size);
 
-int main(int argc, char const *argv[])
-{
+int main(int argc, char const *argv[]){
 	int* arr;
 	int input = atoi(argv[1]);
 	arr = changer(input);
@@ -49,16 +49,20 @@ int* changer(int amount){
 			arr[i] = P;
 	}
 
-	cout << "An Array of size [" << arr_size << "] was created containing:" 
-		<< endl << quarters << " Quarter(s)" 
-		<< endl << dimes << " Dime(s)"
-		<< endl << nickels << " Nickel(s)"
-		<< endl << pennies << " Pennie(s)" << endl;
-
-	for(int i = 0; i < arr_size; i++)
-		cout << arr[i] << " ";
-	cout << endl;
-
+	printResults(arr, quarters, dimes, nickels, pennies, arr_size);
 
 	return arr;
+}
+
+void printResults(int* arr, int quarters, int dimes, int nickels, int pennies, int arr_size){
+cout << "An Array of size [" << arr_size << "] was created containing:" 
+	<< endl << quarters << " Quarter(s)" 
+	<< endl << dimes << " Dime(s)"
+	<< endl << nickels << " Nickel(s)"
+	<< endl << pennies << " Pennie(s)" << endl;
+
+for(int i = 0; i < arr_size; i++)
+	cout << arr[i] << " ";
+cout << endl;
+
 }
