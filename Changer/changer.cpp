@@ -2,6 +2,11 @@
 
 using namespace std;
 
+//Declaring Contant values for Quarters, Dimes, Nickels, and Pennies
+//Q = Quarters = 25
+//D = Dimes = 10
+//N = Nickels = 5
+//P = Pennies = 1
 #define Q 25
 #define D 10
 #define N 5
@@ -10,6 +15,8 @@ using namespace std;
 int* changer(int amount);
 void printResults(int * arr, int quarters, int dimes, int nickels, int pennies, int arr_size);
 
+//Main takes in 1 command line argument. An Integer Value which is
+//sent to the changer function. An Int Array receives the results from changer
 int main(int argc, char const *argv[]){
 	int* arr;
 	int input = atoi(argv[1]);
@@ -18,7 +25,11 @@ int main(int argc, char const *argv[]){
 	return 0;
 }
 
-
+//Changer is passed an integer value and creates an array based on the 
+//total number of coins needed to create that value 
+//(ie. 99 = 3 Quarters, 2 Dimes, and 4 pennies. Array of size 9 is created)
+//The array is then populated with the correct values, and returned after being 
+//sent to the printResults function
 int* changer(int amount){
 	int* arr;
 	int quarters = amount / Q;
@@ -49,7 +60,7 @@ int* changer(int amount){
 	return arr;
 }
 
-
+//Outputs the resulting array to the console
 void printResults(int* arr, int quarters, int dimes, int nickels, int pennies, int arr_size){
 cout << "An Array of size [" << arr_size << "] was created containing:" 
 	<< endl << quarters << " Quarter(s)" 
