@@ -20,7 +20,6 @@ int main(int argc, char const *argv[]){
 }
 
 
-
 int* changer(int amount){
 
 	int* arr;
@@ -53,6 +52,7 @@ int* changer(int amount){
 
 	return arr;
 }
+
 
 void printResults(int* arr, int quarters, int dimes, int nickels, int pennies, int arr_size){
 cout << "An Array of size [" << arr_size << "] was created containing:" 
