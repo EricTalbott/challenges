@@ -7,7 +7,6 @@ using namespace std;
 #define N 5
 #define P 1
 
-
 int* changer(int amount);
 void printResults(int * arr, int quarters, int dimes, int nickels, int pennies, int arr_size);
 
@@ -21,9 +20,7 @@ int main(int argc, char const *argv[]){
 
 
 int* changer(int amount){
-
 	int* arr;
-
 	int quarters = amount / Q;
 	amount = amount % Q;
 	int dimes = amount / D;
@@ -32,7 +29,6 @@ int* changer(int amount){
 	amount = amount % N;
 	int pennies = amount / P;
 	amount = amount % P;
-
 	int arr_size = quarters + dimes + nickels + pennies;
 
 	arr = new int[arr_size];
