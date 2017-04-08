@@ -38,29 +38,26 @@ int* changer(int amount){
 
 	arr = new int[arr_size];
 
-	arr_size = 0;
-	for(int i = arr_size; i < (arr_size + quarters); i++)
-		arr[i] = Q;
+	for(int i = 0; i < arr_size; i++){
+		if(i < quarters)
+			arr[i] = Q;
+		else if (i < quarters + dimes)
+			arr[i] = D;
+		else if(i < quarters + dimes + nickels)
+			arr[i] = N;
+		else
+			arr[i] = P;
+	}
 
-	arr_size += quarters;
-	for(int i = arr_size; i < (arr_size + dimes); i++)
-		arr[i] = D;
-
-	arr_size += dimes;
-	for(int i = arr_size; i < (arr_size + nickels); i++)
-		arr[i] = N;
-
-	arr_size += nickels;
-	for(int i = arr_size; i < (arr_size + pennies); i++)
-		arr[i] = P;
-
-	arr_size += pennies;
-	
 	cout << "An Array of size [" << arr_size << "] was created containing:" 
 		<< endl << quarters << " Quarter(s)" 
 		<< endl << dimes << " Dime(s)"
 		<< endl << nickels << " Nickel(s)"
 		<< endl << pennies << " Pennie(s)" << endl;
+
+	for(int i = 0; i < arr_size; i++)
+		cout << arr[i] << " ";
+	cout << endl;
 
 
 	return arr;
