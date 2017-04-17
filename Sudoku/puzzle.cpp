@@ -43,7 +43,53 @@ void printPuzzle(int** puzzle){
 }
 
 Cell *** setUpPuzzle(int ** puzzle){
-	
-	
+
+	Cell *** sudoku;
+
+	sudoku = (Cell***)malloc(sizeof(Cell**)*9);
+	for(int i = 0; i < 9; i++){
+		sudoku[i] = (Cell**)malloc(sizeof(Cell*)*9);
+		for(int j = 0; j < 9; j++){
+			sudoku[i][j] = (Cell*)malloc(sizeof(Cell));
+
+			sudoku[i][j]->number = puzzle[i][j];
+			
+			sudoku[i][j]->row = i;
+			sudoku[i][j]->col = j;
+
+			if(i < 3){
+				if(j < 3)
+					sudoku[i][j]->box = 0;
+				else if(j < 6)
+					sudoku[i][j]->box = 3;
+				else
+					sudoku[i][j]->box = 6;
+			}
+			else if(i < 6){
+				if(j < 3)
+					sudoku[i][j]->box = 1;
+				else if(j < 6)
+					sudoku[i][j]->box = 4;
+				else
+					sudoku[i][j]->box = 7;
+			}
+			else{
+				if(j < 3)
+					sudoku[i][j]->box = 2;
+				else if(j < 6)
+					sudoku[i][j]->box = 5;
+				else
+					sudoku[i][j]->box = 8;
+			}
+			
+			if(sudoku->number != 0)
+				sudoku[i][j]->isSet = true;
+			else
+				sudoku[i][j]->isSet = false;
+		}
+	}
+
+	return sudoku;
+
 
 }

@@ -13,4 +13,4 @@ typedef struct Cell{
 
 int ** createPuzzle();
 void printPuzzle(int** puzzle);
-Cell *** setUpPuzzle(int ** puzzle);
+Cell *** setUpPuzzle(int ** puzzle);l
