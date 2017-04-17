@@ -16,4 +16,4 @@ int ** createPuzzle();
 void printPuzzle(int ** puzzle);
 Cell *** setUpPuzzle(int ** puzzle);
 void initialRunThrough(Cell *** &sudoku);
-void findPossibleValues(Cell *** &sudoku, int i, int j);
+bool findPossibleValues(Cell *** &sudoku, int i, int j);
