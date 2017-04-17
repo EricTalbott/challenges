@@ -82,7 +82,7 @@ Cell *** setUpPuzzle(int ** puzzle){
 					sudoku[i][j]->box = 8;
 			}
 			
-			if(sudoku->number != 0)
+			if(sudoku[i][j]->number != 0)
 				sudoku[i][j]->isSet = true;
 			else
 				sudoku[i][j]->isSet = false;
@@ -93,26 +93,41 @@ Cell *** setUpPuzzle(int ** puzzle){
 	return sudoku;
 }
 
-Cell *** initialRunThrough(Cell *** sudoku){
+void initialRunThrough(Cell *** &sudoku){
+
+	int ** puzzle; 
 
 	for (int i = 0; i < 9; i++){
 		for (int j = 0; j < 9; j++){
-
 			if(!sudoku[i][j]->isSet){
-				sudoku[i][j]->possible = findPossibleValues(sudoku, i, j);	
+				findPossibleValues(sudoku, i, j);	
 			}
 
 		}
 	}
 
+	puzzle = (int**)malloc(sizeof(int*)*9);
+	for(int i = 0; i < 9; i++){
+		puzzle[i] = (int*)malloc(sizeof(int)*9);
+		for(int j = 0; j < 9; j++){
+			puzzle[i][j] = sudoku[i][j]->number;
+		}
+	}
+
+
+	printf("\n\n");
+	
+	printPuzzle(puzzle);
+
+
 }
 
-int * findPossibleValues(Cell *** sudoku, int i, int j){
+void findPossibleValues(Cell *** &sudoku, int i, int j){
 	int notPos[9] = {0};
 	int size = 0;
 
 	//check each column
-	for(int c = 0; c < 9; r++){
+	for(int c = 0; c < 9; c++){
 		if(sudoku[i][c]->isSet){
 			bool inList = false;
 
@@ -146,22 +161,27 @@ int * findPossibleValues(Cell *** sudoku, int i, int j){
 			}
 		}
 	}
-
+	
 	//check each box
 	for(int r = 0; r < 9; r++){
+
 		for(int c = 0; c < 9; c++){
+
 			if(sudoku[r][c]->box == sudoku[i][j]->box){
+
 				if(sudoku[r][c]->isSet){
 					bool inList = false;
 					
 					//assure number isn't already in notPos list
 					for(int k = 0; k < size; k++){
-						if(sudoku[i][c]->number == notPos[k]){
+
+						if(sudoku[r][c]->number == notPos[k]){
 							inList = true;
 						}
 					}
+
 					if(!inList){
-						notPos[size] = sudoku[i][c]->number;
+						notPos[size] = sudoku[r][c]->number;
 						size++;
 					}
 
@@ -169,29 +189,41 @@ int * findPossibleValues(Cell *** sudoku, int i, int j){
 			}
 		}
 	}
+
 	int array[9] = {0};
 	int arrSize = 0;
 
 	for(int value = 1; value < 10; value++){
-
-
-		for(int k = 0; k < size; k++)
+		bool hasVal = false;
+		for(int k = 0; k < size; k++){
 			if(value == notPos[k])
-				goto outer;
+				hasVal = true;
+		}
 			
-		array[arrSize] = value;
-		arrSize++;
+		if(!hasVal){
+			array[arrSize] = value;
+			arrSize++;
+		}	
 
-
-outer:
 	}
 
-	int * finalArr = (int*)malloc(sizeof(int)*arrSize);
+
+	sudoku[i][j]->count = arrSize;
+	if(sudoku[i][j]->count <= 1){
+		sudoku[i][j]->number = array[0];
+		sudoku[i][j]->isSet = true;
+		return;
+	}
+
+	
+	sudoku[i][j]->possible = (int*)malloc(sizeof(int)*arrSize);
+
 	for(int num = 0; num < arrSize; num++){
-		finalArr[num] = array[num];
+		
+		sudoku[i][j]->possible[num] = array[num];
+		
 	}
 
-	return finalArr;
 
 }
 
