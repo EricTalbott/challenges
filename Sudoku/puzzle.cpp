@@ -86,10 +86,144 @@ Cell *** setUpPuzzle(int ** puzzle){
 				sudoku[i][j]->isSet = true;
 			else
 				sudoku[i][j]->isSet = false;
+
 		}
 	}
 
 	return sudoku;
+}
 
+Cell *** initialRunThrough(Cell *** sudoku){
+
+	for (int i = 0; i < 9; i++){
+		for (int j = 0; j < 9; j++){
+
+			if(!sudoku[i][j]->isSet){
+				sudoku[i][j]->possible = findPossibleValues(sudoku, i, j);	
+			}
+
+		}
+	}
 
 }
+
+int * findPossibleValues(Cell *** sudoku, int i, int j){
+	int notPos[9] = {0};
+	int size = 0;
+
+	//check each column
+	for(int c = 0; c < 9; r++){
+		if(sudoku[i][c]->isSet){
+			bool inList = false;
+
+			//assure number isn't already in notPos list
+			for(int k = 0; k < size; k++){
+				if(sudoku[i][c]->number == notPos[k]){
+					inList = true;
+				}
+			}
+			if(!inList){
+				notPos[size] = sudoku[i][c]->number;
+				size++;
+			}
+		}
+	}
+
+	//check each row
+	for(int r = 0; r < 9; r++){
+		if(sudoku[r][j]->isSet){
+			bool inList = false;
+
+			//assure number isn't already in notPos list
+			for(int k = 0; k < size; k++){
+				if(sudoku[r][j]->number == notPos[k]){
+					inList = true;
+				}
+			}
+			if(!inList){
+				notPos[size] = sudoku[r][j]->number;
+				size++;
+			}
+		}
+	}
+
+	//check each box
+	for(int r = 0; r < 9; r++){
+		for(int c = 0; c < 9; c++){
+			if(sudoku[r][c]->box == sudoku[i][j]->box){
+				if(sudoku[r][c]->isSet){
+					bool inList = false;
+					
+					//assure number isn't already in notPos list
+					for(int k = 0; k < size; k++){
+						if(sudoku[i][c]->number == notPos[k]){
+							inList = true;
+						}
+					}
+					if(!inList){
+						notPos[size] = sudoku[i][c]->number;
+						size++;
+					}
+
+				}
+			}
+		}
+	}
+	int array[9] = {0};
+	int arrSize = 0;
+
+	for(int value = 1; value < 10; value++){
+
+
+		for(int k = 0; k < size; k++)
+			if(value == notPos[k])
+				goto outer;
+			
+		array[arrSize] = value;
+		arrSize++;
+
+
+outer:
+	}
+
+	int * finalArr = (int*)malloc(sizeof(int)*arrSize);
+	for(int num = 0; num < arrSize; num++){
+		finalArr[num] = array[num];
+	}
+
+	return finalArr;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
