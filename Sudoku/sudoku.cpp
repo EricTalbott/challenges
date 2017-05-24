@@ -7,7 +7,11 @@ int main()
 	printPuzzle(puzzle);
 	allCells = setUpPuzzle(puzzle);
 	initialRunThrough(allCells);
-
+	puzzle = makePrintablePuzzle(allCells);
+	printPuzzle(puzzle);
+	nextRunThrough(allCells);
+	puzzle = makePrintablePuzzle(allCells);
+	printPuzzle(puzzle);
 
 	return 0;
 }
