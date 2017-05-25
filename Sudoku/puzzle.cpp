@@ -126,7 +126,14 @@ void thirdRunThrough(Cell *** &sudoku){
 
 
 
+void twinValuePossible(Cell ** &sudoku, int row, int col){
+	int count = sudoku[row][col]->count;
+	int otherCount = 0;
 
+	for(int i = 0)
+
+
+}
 
 
 
