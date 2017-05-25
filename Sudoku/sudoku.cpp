@@ -12,6 +12,7 @@ int main()
 	nextRunThrough(allCells);
 	puzzle = makePrintablePuzzle(allCells);
 	printPuzzle(puzzle);
+	printPossibilities(allCells);
 
 	return 0;
 }

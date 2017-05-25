@@ -24,7 +24,6 @@ int ** createPuzzle(){
 			puzzle[i][j] = array[i][j];
 		}
 	}
-
 	return puzzle;
 }
 
@@ -41,12 +40,12 @@ void printPuzzle(int** puzzle){
 		}
 		printf("\n");
 		if((i+1) % 3 == 0)
-			printf("------------------------------\n" );
+			printf("------------------------------\n");
 	}
+	printf("\n");
 }
 
 Cell *** setUpPuzzle(int ** puzzle){
-
 	Cell *** sudoku;
 	int id = 0;
 	sudoku = (Cell***)malloc(sizeof(Cell**)*9);
@@ -60,168 +59,121 @@ Cell *** setUpPuzzle(int ** puzzle){
 			sudoku[i][j]->row = i;
 			sudoku[i][j]->col = j;
 			sudoku[i][j]->ID = id;
+			sudoku[i][j]->count = 0;
+			sudoku[i][j]->possible = new int[9];
 			id++;
 
 			sudoku[i][j]->box = addToBox(puzzle[i][j], i, j);
-		
-			
+				
 			if(sudoku[i][j]->number != 0)
 				sudoku[i][j]->isSet = true;
 			else
 				sudoku[i][j]->isSet = false;
-
 		}
 	}
 	return sudoku;
 }
 
-void initialRunThrough(Cell *** &sudoku){
-
-	int ** puzzle; 
+void initialRunThrough(Cell *** &sudoku){ 
 	bool newValueSet;
 
 	do{ 
-
 		newValueSet = false;
 		for (int i = 0; i < 9; i++){
 			for (int j = 0; j < 9; j++){
 				if(!sudoku[i][j]->isSet){
 					findPossibleValues(sudoku, i, j);
 						//If only one possibility, set the Cell
-					if(sudoku[i][j]->possible.size() == 1){
+					if(sudoku[i][j]->count == 1){
 						setCellValue(sudoku, i, j);	
 						newValueSet = true;
 					}
 				}
 			}
 		}
-
 		if(puzzleSolved(sudoku)) break;
-
 	}while(newValueSet);
-
 }
 
-
 void nextRunThrough(Cell *** &sudoku){
-
-	int ** puzzle; 
 	bool newValueSet;
-
 	do{ 
 		newValueSet = false;
-
 		for (int i = 0; i < 9; i++){
 			for (int j = 0; j < 9; j++){
 				if(!sudoku[i][j]->isSet){
 					checkUniquePossibilities(sudoku, i, j);
 						//If only one possibility, set the Cell
-					if(sudoku[i][j]->possible.size() == 1){
-						setCellValue(sudoku, i, j);	
+					if(sudoku[i][j]->count == 1){
+						setCellValue(sudoku, i, j);
+						initialRunThrough(sudoku);	
 						newValueSet = true;
 					}
 				}
 			}
-		}
-
-		if(newValueSet){
-			initialRunThrough(sudoku);
-		}
+		}		
 		if(puzzleSolved(sudoku)) break;
-
-
+		count++;
 	}while(newValueSet);
+}
+
+void thirdRunThrough(Cell *** &sudoku){
+
 
 }
 
 
+
+
+
+
+
+
+
+
+
+
 void findPossibleValues(Cell *** &sudoku, int row, int col){
 	int notPos[9] = {-1};
+	int notPosCnt = 0;
 	int boxNum = sudoku[row][col]->box;
 
 	//Check if value is contained in "visible" cell
 	for(int val = 1; val <= 9; val++){
 		if(columnContains(sudoku, val, col) || rowContains(sudoku, val, row) || boxContains(boxNum, val)){
-			notPos[val-1] = val;
+			notPos[notPosCnt] = val;
+			notPosCnt++;
 		}
 	}
 
 	//If first time visiting cell, populate possible values
 	//Else remove impossible values
-	if(sudoku[row][col]->possible.size() == 0){
-		for(int value = 1; value <= 9; value++){
-			if(!(value == notPos[value-1]))
-				sudoku[row][col]->possible.push_back(value);
+	sudoku[row][col]->count = (9 - notPosCnt);
+	int current = 0;
+
+	int *finder;
+	for(int i = 1; i <= 9; i++){
+		finder = std::find(std::begin(notPos), std::end(notPos), i);
+		if(finder == std::end(notPos)){
+			sudoku[row][col]->possible[current]=i;
+			current++;
 		}
-	}else
-		removeImpossibleValue(notPos, sudoku[row][col]->possible);
-	
+	}
 }
 
 void checkUniquePossibilities(Cell *** &sudoku, int row, int col){
 	int boxNum, value, id;
-	std::vector<int>::iterator it;
-	std::vector<int> possVector;
 
 	boxNum = sudoku[row][col]->box;
-	possVector = sudoku[row][col]->possible;
 	id = sudoku[row][col]->ID;
 
-  	for (it = possVector.begin() ; it != possVector.end(); ++it){
-    	value = (*it);
+  	for (int i = 0; i < sudoku[row][col]->count; i++){
+    	value = sudoku[row][col]->possible[i];
     	if(!(visibleVectorContains(sudoku, boxNum, value, id, row, col))){
-    		sudoku[row][col]->possible.clear();
-    		sudoku[row][col]->possible.push_back(value);
+    		setPossibleValue(value, sudoku[row][col]->possible, sudoku[row][col]->count);
     	}
   	}
 }
-
-/*
-void checkUniquePossibilitiesRows(Cell *** &sudoku, int i, int j){
-
-	bool isUnique = false;
-	int arrSize = 0;
-
-	for(int c = 0; c < 9; c++){
-		if(!sudoku[i][c]->isSet && c != j){
-			arrSize += sudoku[i][c]->count;
-		}
-	}
-
-	int array[arrSize];
-	int index = 0;
-
-	for(int c = 0; c < 9; c++){
-		if(!sudoku[i][c]->isSet && c != j){
-			for(int x = 0; x < sudoku[i][c]->count; x++){
-				array[index] = sudoku[i][c]->possible[x];
-				index++;
-			}
-		}
-	}
-
-	index = 0;
-	for(int x = 0; x < arrSize; x++){
-		
-		if(sudoku[i][j]->possible[index] == array[x]){
-			index++;
-			if(index == sudoku[i][j]->count){
-				//return false;
-			}
-			x = -1;
-			continue;
-		}
-
-		sudoku[i][j]->number = sudoku[i][j]->possible[index];
-		sudoku[i][j]->isSet = true;
-		newValueSet = true;
-		
-	}
-}*/
-
-
-
-
 
 int** makePrintablePuzzle(Cell *** sudoku){
 	int ** puzzle = (int**)malloc(sizeof(int*)*9);
@@ -282,22 +234,42 @@ int addToBox(int number, int i, int j){
 
 //Return True if a given value is contained in a given "box". Returns false if not.
 bool visibleVectorContains(Cell *** sudoku, int boxNum, int value, int id, int row, int column){
-	std::vector<int>::iterator it;
-	std::vector<int> possVector;
+	bool rowContains = false,
+		colContains = false,
+		boxContains = false;
 
 	for(int rw = 0; rw < 9; rw++){
 		for (int col = 0; col < 9; col++){
-			if( (rw == row || column == col || sudoku[row][col]->box == boxNum) && 
-			   !(sudoku[row][col]->isSet) && (sudoku[row][col]->ID != id)){
+			if((!(sudoku[rw][col]->isSet)) && (sudoku[rw][col]->ID != id)){
+				
+				if(rw == row){		
+					for (int i = 0 ; i < sudoku[rw][col]->count; i++){
+		    			if(value == sudoku[rw][col]->possible[i]){ 
+		    				rowContains = true;
+		    			}
+		  			}
 
-				possVector = sudoku[rw][col]->possible;
-				for (it = possVector.begin() ; it != possVector.end(); ++it){
-    				if(value == (*it)) return true;
-  				}
+				}		
+				
+				if(col == column){
+					for (int i = 0 ; i < sudoku[rw][col]->count; i++){
+		    			if(value == sudoku[rw][col]->possible[i]) {
+		    				colContains = true;
+		    			}
+		  			}	
+		  		}
+
+		  		if(sudoku[rw][col]->box == boxNum ){
+					for (int i = 0 ; i < sudoku[rw][col]->count; i++){
+		    			if(value == sudoku[rw][col]->possible[i]){
+		    				boxContains = true;
+		    			}
+		  			}	
+		  		}
 			}
 		}
 	}
-	return false;
+	return (rowContains && colContains && boxContains);
 }
 
 bool boxContains(int boxNumber, int value){
@@ -307,9 +279,7 @@ bool boxContains(int boxNumber, int value){
 	for(it = keyRange.first; it != keyRange.second; it++){
 		if(value == (*it).second) return true;
 	}
-
 	return false;
-
 }
 
 //Return True if a given value is contained in a given row. Returns false if not.
@@ -323,7 +293,6 @@ bool rowContains(Cell *** sudoku, int value, int row){
 		}
 	}
 	return false;	
-
 }
 
 //Return True if a given value is contained in a given column. Returns false if not.
@@ -340,7 +309,7 @@ bool columnContains(Cell *** sudoku, int value, int column){
 }
 
 void setCellValue(Cell *** &sudoku, int row, int col){
-	sudoku[row][col]->number = sudoku[row][col]->possible.front();
+	sudoku[row][col]->number = sudoku[row][col]->possible[0];
 	sudoku[row][col]->box = addToBox(sudoku[row][col]->number, row, col);
 	sudoku[row][col]->isSet = true;
 }
@@ -360,29 +329,23 @@ bool puzzleSolved(Cell *** sudoku){
 	return false;
 }
 
-void removeImpossibleValue(int* notPos, std::vector<int> &poss){
-	std::vector<int>::iterator position;
-	
-	for(int i = 0; i < 9; i++){
-		position = std::find(poss.begin(), poss.end(), notPos[i]);
-		if (position != poss.end()){ 
-   			poss.erase(position);
-   		}
-	}
+
+void setPossibleValue(int value, int* &poss, int &count){
+	poss[0] = value;
+	count = 1;
 }
 
 void printPossibilities(Cell *** sudoku){
 	for(int i = 0; i < 9; i++)
 		for(int j = 0; j < 9; j++){
 			std::cout <<"Row " << i <<", Col " << j <<",  " << ", Box " << sudoku[i][j]->box << ": ";
-  			for (std::vector<int>::iterator it = sudoku[i][j]->possible.begin() ; it != sudoku[i][j]->possible.end(); ++it)
-    		std::cout << ' ' << *it;
+  			for (int k = 0; k < sudoku[i][j]->count; k++)
+    		std::cout << ' ' << sudoku[i][j]->possible[k];
   		std::cout << '\n';
 		}
 }
 
 void printBox(){
-
 	mapIter m_it, s_it;
 
 	for(m_it = box.begin(); m_it != box.end(); m_it = s_it){

@@ -14,7 +14,8 @@ struct Cell{
 	int col;
 	int box;
 	int ID;
-	std::vector<int> possible;
+	int* possible;
+	int count;
 };
 
 typedef std::multimap<int, int> boxMap;
@@ -26,8 +27,11 @@ typedef boxMap::iterator mapIter;
 int ** createPuzzle();
 void printPuzzle(int ** puzzle);
 Cell *** setUpPuzzle(int ** puzzle);
+
+
 void initialRunThrough(Cell *** &sudoku);
 void nextRunThrough(Cell *** &sudoku);
+void thirdRunThrough(Cell *** &sudoku);
 void findPossibleValues(Cell *** &sudoku, int i, int j);
 ////bool checkUniquePossibilitiesCols(Cell *** &sudoku, int i, int j);
 void checkUniquePossibilities(Cell *** &sudoku, int i, int j);
@@ -41,7 +45,9 @@ bool visibleVectorContains(Cell *** sudoku, int boxNum, int value, int id, int r
 bool boxContains(int boxNumber, int value);
 bool rowContains(Cell *** sudoku, int value, int row);
 bool columnContains(Cell *** sudoku, int value, int column);
-void removeImpossibleValue(int* notPos, std::vector<int> &poss);
+//void removeImpossibleValue(int* notPos, int* &poss, int &count);
+//void removeImpossibleValue(int value, int* &poss, int &count);
+void setPossibleValue(int value, int* &poss, int &count);
 
 bool puzzleSolved(Cell *** sudoku);
 
