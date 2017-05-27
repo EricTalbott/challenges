@@ -42,11 +42,20 @@ void printPossibilities(Cell *** sudoku);
 int** makePrintablePuzzle(Cell *** sudoku);
 
 bool visibleVectorContains(Cell *** sudoku, int boxNum, int value, int id, int row, int column);
+bool rowVectorContains(Cell *** sudoku, int rw, int col, int value);
+bool columnVectorContains(Cell *** sudoku, int rw, int col, int value);
+bool boxVectorContains(Cell *** sudoku, int rw, int col, int value);
+
+
+
+void twinValuePossible(Cell *** &sudoku, int row, int col);
+
+
 bool boxContains(int boxNumber, int value);
 bool rowContains(Cell *** sudoku, int value, int row);
 bool columnContains(Cell *** sudoku, int value, int column);
 //void removeImpossibleValue(int* notPos, int* &poss, int &count);
-//void removeImpossibleValue(int value, int* &poss, int &count);
+void removeImpossibleValue(Cell *** &sudoku, int row, int col, int value);
 void setPossibleValue(int value, int* &poss, int &count);
 
 bool puzzleSolved(Cell *** sudoku);

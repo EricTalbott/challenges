@@ -113,12 +113,30 @@ void nextRunThrough(Cell *** &sudoku){
 			}
 		}		
 		if(puzzleSolved(sudoku)) break;
-		count++;
+
 	}while(newValueSet);
 }
 
 void thirdRunThrough(Cell *** &sudoku){
+	bool newValueSet;
+	do{ 
+		newValueSet = false;
+		for (int i = 0; i < 9; i++){
+			for (int j = 0; j < 9; j++){
+				if(!sudoku[i][j]->isSet){
+					twinValuePossible(sudoku, i, j);
+						//If only one possibility, set the Cell
+					if(sudoku[i][j]->count == 1){
+						setCellValue(sudoku, i, j);
+						nextRunThrough(sudoku);	
+						newValueSet = true;
+					}
+				}
+			}
+		}		
+		if(puzzleSolved(sudoku)) break;
 
+	}while(newValueSet);
 
 }
 
@@ -126,11 +144,37 @@ void thirdRunThrough(Cell *** &sudoku){
 
 
 
-void twinValuePossible(Cell ** &sudoku, int row, int col){
-	int count = sudoku[row][col]->count;
-	int otherCount = 0;
+void twinValuePossible(Cell *** &sudoku, int row, int col){
+	int id = sudoku[row][col]->ID;
+	int cnt = sudoku[row][col]->count;
+	int twinRowLocation = -1;
+	int value1, value2;
 
-	for(int i = 0)
+	if(cnt == 2){
+		value1 = sudoku[row][col]->possible[0];
+		value2 = sudoku[row][col]->possible[1];
+		for(int r = 0; r < 9; r++){
+			if(!(sudoku[r][col]->isSet) && (sudoku[r][col]->count == cnt)
+				 && (sudoku[r][col]->ID != id)){		
+				if(value1 == sudoku[r][col]->possible[0] &&
+					value2 == sudoku[r][col]->possible[1]){
+						twinRowLocation = r;
+						break;
+					}
+				
+			}
+		}
+	}
+	for(int r = 0; r < 9; r++){
+		if(r == twinRowLocation) continue;
+
+		if(rowVectorContains(sudoku, r, col, value1)){
+			removeImpossibleValue(sudoku, r, col, value1);
+		}
+		if(rowVectorContains(sudoku, r, col, value2)){
+			removeImpossibleValue(sudoku, r, col, value2);
+		}
+	}
 
 
 }
@@ -247,37 +291,56 @@ bool visibleVectorContains(Cell *** sudoku, int boxNum, int value, int id, int r
 
 	for(int rw = 0; rw < 9; rw++){
 		for (int col = 0; col < 9; col++){
-			if((!(sudoku[rw][col]->isSet)) && (sudoku[rw][col]->ID != id)){
-				
+			if((!(sudoku[rw][col]->isSet)) && (sudoku[rw][col]->ID != id)){	
 				if(rw == row){		
-					for (int i = 0 ; i < sudoku[rw][col]->count; i++){
-		    			if(value == sudoku[rw][col]->possible[i]){ 
-		    				rowContains = true;
-		    			}
-		  			}
-
+					if(rowVectorContains(sudoku, rw, col, value)) rowContains = true;
 				}		
 				
 				if(col == column){
-					for (int i = 0 ; i < sudoku[rw][col]->count; i++){
-		    			if(value == sudoku[rw][col]->possible[i]) {
-		    				colContains = true;
-		    			}
-		  			}	
+					if(columnVectorContains(sudoku, rw, col, value)) colContains = true;
 		  		}
 
 		  		if(sudoku[rw][col]->box == boxNum ){
-					for (int i = 0 ; i < sudoku[rw][col]->count; i++){
-		    			if(value == sudoku[rw][col]->possible[i]){
-		    				boxContains = true;
-		    			}
-		  			}	
+		  			if(boxVectorContains(sudoku, rw, col, value)) boxContains = true;
 		  		}
 			}
 		}
 	}
 	return (rowContains && colContains && boxContains);
 }
+
+
+bool rowVectorContains(Cell *** sudoku, int rw, int col, int value){
+	bool rowContains = false;
+	for (int i = 0 ; i < sudoku[rw][col]->count; i++){
+		if(value == sudoku[rw][col]->possible[i]){ 
+		    rowContains = true;
+		}
+	}
+	return rowContains;
+}
+
+bool columnVectorContains(Cell *** sudoku, int rw, int col, int value){
+	bool colContains = false;
+
+	for (int i = 0 ; i < sudoku[rw][col]->count; i++){
+		if(value == sudoku[rw][col]->possible[i]) {
+		    colContains = true;
+		}
+	}
+	return colContains;
+}
+
+bool boxVectorContains(Cell *** sudoku, int rw, int col, int value){
+	bool boxContains = false;
+	for (int i = 0 ; i < sudoku[rw][col]->count; i++){
+		if(value == sudoku[rw][col]->possible[i]){
+		    boxContains = true;	
+		}	
+	}
+	return boxContains;
+}
+
 
 bool boxContains(int boxNumber, int value){
 	mapIter it;
@@ -336,7 +399,6 @@ bool puzzleSolved(Cell *** sudoku){
 	return false;
 }
 
-
 void setPossibleValue(int value, int* &poss, int &count){
 	poss[0] = value;
 	count = 1;
@@ -369,6 +431,20 @@ void printBox(){
 }
 
 
+
+void removeImpossibleValue(Cell *** &sudoku, int row, int col, int value){
+	int cnt = sudoku[row][col]->count;
+	
+	for(int i = 0; i < cnt; i++){
+		if(sudoku[row][col]->possible[i] == value){
+			for(int j = i; j < cnt; j++){
+				sudoku[row][col]->possible[j] = sudoku[row][col]->possible[j+1];
+			}
+			--cnt;
+		}
+	}
+	sudoku[row][col]->count = cnt;
+}
 
 
 
